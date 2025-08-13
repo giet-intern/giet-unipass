@@ -2,8 +2,7 @@ Flask
 Flask-Cors
 pymongo
 python-dotenv
-docx
+python-docx
 reportlab
 PyMuPDF
 gunicorn
-exceptions
