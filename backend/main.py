@@ -12,4 +12,3 @@ app.register_blueprint(student_bp, url_prefix="/student")
 @app.route("/")
 def home():
     return "Hello World!"
-    

@@ -59,6 +59,8 @@ def generate_hallticket_pdf(pin: str):
         (3, "CS"): "./docs/template_3_CS.docx",
         (4, "AIML"): "./docs/template_4_AIML.docx",
         (4, "CS"): "./docs/template_4_CS.docx",
+        (4, "DS"): "./docs/template_4_DS.docx",
+        (3, "DS"): "./docs/template_3_DS.docx"
     }
     template = template_map.get((year, dept))
     if not template or not os.path.isfile(template):

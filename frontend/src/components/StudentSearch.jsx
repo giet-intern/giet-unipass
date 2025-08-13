@@ -10,7 +10,8 @@ import {
 export default function StudentSearch() {
   const [pin, setPin] = useState("");
   const [student, setStudent] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [receiptFile, setReceiptFile] = useState(null);
 
   const fileInputRef = useRef(null);
@@ -18,19 +19,20 @@ export default function StudentSearch() {
   useEffect(() => {
     setReceiptFile(null);
     if (fileInputRef.current) fileInputRef.current.value = null;
-  }, [pin, student]);
+  }, [student]);
 
   const handleSearch = async () => {
     if (!pin.trim()) return toast.error("Please enter PIN");
-    setLoading(true);
+    setSearching(true);
     try {
       const { data } = await searchStudent(pin.trim());
       setStudent(data);
-    } catch {
-      toast.error("Student not found");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Student not found");
       setStudent(null);
+    } finally {
+      setSearching(false);
     }
-    setLoading(false);
   };
 
   const handleKeyDown = (e) => e.key === "Enter" && handleSearch();
@@ -55,7 +57,8 @@ export default function StudentSearch() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type !== "application/pdf") {
+    if (!file) return;
+    if (file.type !== "application/pdf") {
       toast.error("Only PDF files are allowed");
       e.target.value = null;
       return;
@@ -70,23 +73,29 @@ export default function StudentSearch() {
 
   const handleUploadReceipt = async () => {
     if (!receiptFile) return toast.error("Select a PDF receipt first");
+    setUploading(true);
     const formData = new FormData();
     formData.append("file", receiptFile);
+
     try {
-      const data = await uploadReceipt(pin.trim(), formData);
-      if (data.success) {
-        toast.success(data.message || "Receipt uploaded successfully");
+      const res = await uploadReceipt(pin.trim(), formData);
+      if (res.success) {
+        toast.success(res.message || "Receipt uploaded successfully");
         setReceiptFile(null);
         setStudent(null);
-      } else toast.error(data.message || "Upload failed");
-    } catch {
-      toast.error("Failed to upload receipt");
+      } else {
+        toast.error(res.message || "Upload failed");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to upload receipt");
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
     <div className="w-full max-w-md mx-auto mt-6 px-2 sm:px-0">
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" />
       <div className="flex flex-col sm:flex-row w-full rounded-md shadow-md overflow-hidden">
         <input
           type="text"
@@ -98,10 +107,10 @@ export default function StudentSearch() {
         />
         <button
           onClick={handleSearch}
-          disabled={loading}
+          disabled={searching}
           className="bg-rose-600 text-white px-4 py-2 font-semibold mt-2 sm:mt-0 sm:ml-2 rounded disabled:opacity-50"
         >
-          {loading ? "Searching..." : "Search"}
+          {searching ? "Searching..." : "Search"}
         </button>
       </div>
 
@@ -123,7 +132,7 @@ export default function StudentSearch() {
                 <td className="px-3 py-2">{student.pin}</td>
                 <td className="px-3 py-2">{student.name}</td>
                 <td className="px-3 py-2 font-semibold">₹{student.due}</td>
-                <td className="px-3 py-2 flex flex-wrap space-x-2">
+                <td className="px-3 py-2 flex flex-wrap items-center space-x-2">
                   {student.due === 0 && (
                     <button
                       onClick={handleGenerate}
@@ -151,10 +160,10 @@ export default function StudentSearch() {
                       )}
                       <button
                         onClick={handleUploadReceipt}
-                        disabled={!receiptFile}
+                        disabled={!receiptFile || uploading}
                         className="bg-rose-600 text-white px-3 py-1 rounded font-semibold disabled:opacity-50"
                       >
-                        Upload
+                        {uploading ? "Uploading..." : "Upload"}
                       </button>
                       <input
                         id="receipt-upload"

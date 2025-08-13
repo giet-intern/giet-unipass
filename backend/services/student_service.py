@@ -9,7 +9,7 @@ from utils.mongo_utils import (
 )
 
 DATE_FORMAT = "%d-%b-%Y"
-MIN_DATE = datetime.strptime("09-Aug-2025", DATE_FORMAT)
+MIN_DATE = datetime.strptime("10-Aug-2025", DATE_FORMAT)
 
 
 def get_student(pin):
@@ -88,6 +88,14 @@ def process_receipt_pdf(file_storage, user_pin):
             "message": "Date is older than current updated date"
         }
 
+    student = find_student_by_pin(user_pin)
+    due = student.get("due", 0)
+    if amount_paid < 1000 and due > 1000:
+        return {
+            "success": False,
+            "message": "Amount paid is less than 1000, but due is more than 1000"
+        }
+
     # Check PIN match
     if roll_no.strip().lower() != user_pin.strip().lower():
         return {
@@ -95,7 +103,6 @@ def process_receipt_pdf(file_storage, user_pin):
             "message": "PIN in receipt does not match your PIN"
         }
 
-    student = find_student_by_pin(user_pin)
     if not student:
         return {
             "success": False,
@@ -103,7 +110,7 @@ def process_receipt_pdf(file_storage, user_pin):
         }
 
     due = student.get("due", 0)
-    update_student_due(0)
+    update_student_due(user_pin, 0)
     
     # Since no file saved, optionally store text or metadata as receipt info
     update_student_receipt(user_pin, "Receipt processed (no file stored)")
