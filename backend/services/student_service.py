@@ -103,7 +103,7 @@ def process_receipt_pdf(file_storage, user_pin):
         }
 
     due = student.get("due", 0)
-    update_student_due(user_pin, due - amount_paid)
+    update_student_due(0)
     
     # Since no file saved, optionally store text or metadata as receipt info
     update_student_receipt(user_pin, "Receipt processed (no file stored)")
