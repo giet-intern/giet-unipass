@@ -2,7 +2,6 @@ Flask
 Flask-Cors
 pymongo
 python-dotenv
-pandas
 docx
 reportlab
 PyMuPDF
