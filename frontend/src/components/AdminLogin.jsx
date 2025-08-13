@@ -1,58 +1,50 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAdmin } from "../context/AdminContext";
+import toast, { Toaster } from "react-hot-toast";
 
-export default function AdminLogin() {
-  const { login } = useAdmin();
-  const navigate = useNavigate();
-
+export default function AdminLogin({ setAdminLoggedIn }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    if (login(username, password)) {
-      navigate("/admin/dashboard");
-    } else {
-      setError("Invalid username or password");
-    }
+    if (username === "admin" && password === "admin123") {
+      toast.success("Login successful");
+      setAdminLoggedIn(true);
+      navigate("/dashboard");
+    } else toast.error("Invalid credentials");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <Toaster position="top-center" />
       <form
-        onSubmit={handleSubmit}
-        className="max-w-sm w-full p-8 shadow rounded space-y-6 border border-rose-300"
+        onSubmit={handleLogin}
+        className="w-full max-w-sm p-6 rounded shadow-md bg-rose-50 flex flex-col space-y-4"
       >
-        <h2 className="text-2xl font-semibold text-rose-600 text-center">
-          Admin Login
+        <h2 className="text-center font-flower text-2xl text-rose-600">
+          Admin Sign In
         </h2>
-        {error && (
-          <p className="text-center text-red-600 font-semibold">{error}</p>
-        )}
         <input
           type="text"
           placeholder="Username"
-          className="w-full p-3 border border-gray-300 rounded focus:outline-rose-500"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          required
-          autoFocus
+          className="w-full px-4 py-2 rounded border border-rose-300 focus:outline-none"
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-3 border border-gray-300 rounded focus:outline-rose-500"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          className="w-full px-4 py-2 rounded border border-rose-300 focus:outline-none"
         />
         <button
           type="submit"
-          className="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded shadow"
+          className="bg-rose-600 text-white font-semibold px-4 py-2 rounded w-full"
         >
-          Login
+          Sign In
         </button>
       </form>
     </div>

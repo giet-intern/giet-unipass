@@ -1,64 +1,55 @@
-import React, { useState, useRef } from "react";
-import { uploadSheet } from "../services/api";
+import { useState } from "react";
+import { generateHallticket } from "../services/api";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function AdminDashboard() {
-  const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const inputRef = useRef();
+  const [pin, setPin] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      toast.error("Please select a file");
-      return;
-    }
-
-    setUploading(true);
-
+  const handleGenerate = async () => {
+    if (!pin.trim()) return toast.error("Enter PIN first");
+    setLoading(true);
     try {
-      await uploadSheet(file);
-      toast.success("Sheet uploaded successfully");
-      setFile(null);
-      if (inputRef.current) inputRef.current.value = "";
-    } catch (error) {
-      toast.error("Failed to upload sheet");
-      console.error(error);
-    } finally {
-      setUploading(false);
+      const response = await generateHallticket(pin.trim());
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `hallticket_${pin.trim()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Hallticket downloaded");
+    } catch {
+      toast.error("Error generating hallticket");
     }
+    setLoading(false);
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded shadow-md">
+    <div className="min-h-screen pt-24 px-4 flex flex-col items-center bg-white">
       <Toaster position="top-center" />
-      <h2 className="text-2xl font-semibold mb-4 text-rose-700">
-        Upload Sheet
+      <h2 className="text-2xl font-semibold text-rose-600 mb-6">
+        Universal Hallticket Downloader
       </h2>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".xls,.xlsx,.csv"
-        onChange={handleFileChange}
-        className="mb-4 w-full"
-      />
-
-      <button
-        onClick={handleUpload}
-        disabled={!file || uploading}
-        className={`w-full py-3 rounded font-semibold text-white transition ${
-          file && !uploading
-            ? "bg-rose-600 hover:bg-rose-700"
-            : "bg-rose-300 cursor-not-allowed"
-        }`}
-      >
-        {uploading ? "Uploading..." : "Upload Sheet"}
-      </button>
+      <div className="flex w-full max-w-md">
+        <input
+          type="text"
+          placeholder="Enter PIN"
+          value={pin}
+          onChange={(e) => setPin(e.target.value)}
+          className="flex-grow px-4 py-2 border border-rose-300 rounded-l focus:outline-none"
+          onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
+        />
+        <button
+          onClick={handleGenerate}
+          disabled={loading}
+          className="bg-rose-600 text-white px-4 py-2 rounded-r font-semibold disabled:opacity-50"
+        >
+          {loading ? "Generating..." : "Generate"}
+        </button>
+      </div>
     </div>
   );
 }

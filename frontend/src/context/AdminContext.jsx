@@ -1,27 +1,34 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-const AdminContext = createContext();
+const AdminContext = createContext({
+  isAdmin: false,
+  login: () => {},
+  logout: () => {},
+});
 
-export function AdminProvider({ children }) {
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+export const AdminProvider = ({ children }) => {
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const login = (username, password) => {
-    if (username === "admin" && password === "admin123") {
-      setIsAdminLoggedIn(true);
-      return true;
-    }
-    return false;
+  useEffect(() => {
+    const v = localStorage.getItem("isAdmin") === "true";
+    setIsAdmin(v);
+  }, []);
+
+  const login = () => {
+    setIsAdmin(true);
+    localStorage.setItem("isAdmin", "true");
   };
 
-  const logout = () => setIsAdminLoggedIn(false);
+  const logout = () => {
+    setIsAdmin(false);
+    localStorage.removeItem("isAdmin");
+  };
 
   return (
-    <AdminContext.Provider value={{ isAdminLoggedIn, login, logout }}>
+    <AdminContext.Provider value={{ isAdmin, login, logout }}>
       {children}
     </AdminContext.Provider>
   );
-}
+};
 
-export function useAdmin() {
-  return useContext(AdminContext);
-}
+export const useAdmin = () => useContext(AdminContext);

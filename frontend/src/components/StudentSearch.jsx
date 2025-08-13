@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FiUpload, FiXCircle, FiArrowLeft } from "react-icons/fi";
+import { FiUpload, FiXCircle } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
 import {
   searchStudent,
@@ -7,7 +7,7 @@ import {
   uploadReceipt,
 } from "../services/api";
 
-export default function StudentSearch({ onBack }) {
+export default function StudentSearch() {
   const [pin, setPin] = useState("");
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -33,6 +33,8 @@ export default function StudentSearch({ onBack }) {
     setLoading(false);
   };
 
+  const handleKeyDown = (e) => e.key === "Enter" && handleSearch();
+
   const handleGenerate = async () => {
     try {
       const response = await generateHallticket(pin.trim());
@@ -46,8 +48,8 @@ export default function StudentSearch({ onBack }) {
       a.remove();
       window.URL.revokeObjectURL(url);
       toast.success("Hallticket downloaded");
-    } catch (error) {
-      toast.error("Error generating hallticket. Ensure fee is fully paid.");
+    } catch {
+      toast.error("Error generating hallticket.");
     }
   };
 
@@ -67,111 +69,92 @@ export default function StudentSearch({ onBack }) {
   };
 
   const handleUploadReceipt = async () => {
-    if (!receiptFile)
-      return toast.error("Please select a PDF receipt file first");
-
+    if (!receiptFile) return toast.error("Select a PDF receipt first");
     const formData = new FormData();
     formData.append("file", receiptFile);
-
     try {
       const data = await uploadReceipt(pin.trim(), formData);
       if (data.success) {
-        toast.success(
-          data.message || "Receipt uploaded successfully. Please search again."
-        );
+        toast.success(data.message || "Receipt uploaded successfully");
         setReceiptFile(null);
         setStudent(null);
-      } else {
-        toast.error(data.message || "Receipt upload failed");
-      }
+      } else toast.error(data.message || "Upload failed");
     } catch {
       toast.error("Failed to upload receipt");
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto w-full text-black">
+    <div className="w-full max-w-md mx-auto mt-6 px-2 sm:px-0">
       <Toaster position="top-center" reverseOrder={false} />
-      <button
-        onClick={onBack}
-        className="flex items-center text-rose-600 hover:text-rose-700 font-semibold mb-6"
-      >
-        <FiArrowLeft className="mr-2" /> Back to Steps
-      </button>
-
-      <div className="flex w-full rounded-md shadow-md overflow-hidden focus-within:ring-2 focus-within:ring-rose-500">
+      <div className="flex flex-col sm:flex-row w-full rounded-md shadow-md overflow-hidden">
         <input
           type="text"
           placeholder="Enter PIN"
           value={pin}
           onChange={(e) => setPin(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="flex-grow px-6 py-3 text-black text-lg font-semibold bg-white placeholder-rose-400 focus:outline-none"
-          aria-label="Enter PIN"
+          onKeyDown={handleKeyDown}
+          className="flex-1 px-4 py-2 text-black text-base sm:text-lg font-semibold bg-white placeholder-rose-400 focus:outline-none"
         />
         <button
           onClick={handleSearch}
           disabled={loading}
-          className="bg-rose-600 text-white px-8 py-3 text-lg font-semibold disabled:opacity-50 transition"
-          type="button"
+          className="bg-rose-600 text-white px-4 py-2 font-semibold mt-2 sm:mt-0 sm:ml-2 rounded disabled:opacity-50"
         >
           {loading ? "Searching..." : "Search"}
         </button>
       </div>
 
       {student && (
-        <div className="mt-10 w-full">
-          <table className="border-collapse text-base w-full max-w-2xl">
-            <thead>
-              <tr className="bg-rose-100 text-rose-700 text-left">
-                <th className="px-6 py-3 whitespace-nowrap">PIN</th>
-                <th className="px-6 py-3 whitespace-nowrap">Name</th>
-                <th className="px-6 py-3 whitespace-nowrap">Fee Due</th>
-                <th className="px-6 py-3 whitespace-nowrap">Actions</th>
+        <div className="overflow-x-auto mt-4">
+          <table className="w-full text-left text-sm sm:text-base border-collapse">
+            <thead className="bg-rose-100 text-rose-800">
+              <tr>
+                <th className="px-3 py-2">PIN</th>
+                <th className="px-3 py-2">Name</th>
+                <th className="px-3 py-2">Fee Due</th>
+                <th className="px-3 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 className={student.due > 0 ? "text-red-600" : "text-green-700"}
               >
-                <td className="px-6 py-3">{student.pin}</td>
-                <td className="px-6 py-3">{student.name}</td>
-                <td className="px-6 py-3 font-semibold">₹{student.due}</td>
-                <td className="px-6 py-3 whitespace-nowrap">
-                  {student.due === 0 ? (
+                <td className="px-3 py-2">{student.pin}</td>
+                <td className="px-3 py-2">{student.name}</td>
+                <td className="px-3 py-2 font-semibold">₹{student.due}</td>
+                <td className="px-3 py-2 flex flex-wrap space-x-2">
+                  {student.due === 0 && (
                     <button
                       onClick={handleGenerate}
-                      className="bg-rose-600 text-white px-5 py-2 rounded shadow font-semibold"
+                      className="bg-rose-600 text-white px-3 py-1 rounded font-semibold"
                     >
-                      Generate Hallticket
+                      Generate
                     </button>
-                  ) : (
-                    <div className="flex items-center space-x-4">
+                  )}
+                  {student.due > 0 && (
+                    <>
                       <label
                         htmlFor="receipt-upload"
-                        className="cursor-pointer inline-flex items-center space-x-2 text-rose-600 hover:text-rose-700"
-                        title="Upload Receipt PDF"
+                        className="cursor-pointer inline-flex items-center space-x-1 text-rose-600"
                       >
-                        <FiUpload className="w-6 h-6" />
+                        <FiUpload className="w-5 h-5" />
+                        <span className="text-sm">Upload Receipt</span>
                       </label>
                       {receiptFile && (
                         <button
                           onClick={handleRemoveFile}
-                          className="text-red-600 hover:text-red-800 focus:outline-none"
-                          title="Remove selected file"
-                          type="button"
-                          aria-label="Remove selected file"
+                          className="text-red-600"
                         >
-                          <FiXCircle className="w-6 h-6" />
+                          <FiXCircle className="w-5 h-5" />
                         </button>
                       )}
                       <button
                         onClick={handleUploadReceipt}
                         disabled={!receiptFile}
-                        className="bg-rose-600 disabled:bg-rose-300 text-white px-4 py-2 rounded shadow font-semibold transition"
-                        type="button"
+                        className="bg-rose-600 text-white px-3 py-1 rounded font-semibold disabled:opacity-50"
                       >
-                        Upload Receipt
+                        Upload
                       </button>
                       <input
                         id="receipt-upload"
@@ -181,7 +164,7 @@ export default function StudentSearch({ onBack }) {
                         onChange={handleFileChange}
                         className="hidden"
                       />
-                    </div>
+                    </>
                   )}
                 </td>
               </tr>

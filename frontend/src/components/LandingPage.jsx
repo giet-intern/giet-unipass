@@ -1,42 +1,59 @@
 import { useState } from "react";
+import {
+  FiCheckCircle,
+  FiUpload,
+  FiFileText,
+  FiAlertCircle,
+} from "react-icons/fi";
 import StudentSearch from "./StudentSearch";
 
 export default function LandingPage() {
   const [showSearch, setShowSearch] = useState(false);
 
   return (
-    <div className="min-h-screen pt-20 bg-white flex flex-col items-center px-4 py-12 font-sans text-black">
+    <div className="min-h-screen bg-white pt-28 px-4 flex flex-col items-center w-full">
+      <p className="text-xl sm:text-2xl md:text-3xl font-flower text-rose-600 text-center">
+        Designed & Developed for students by
+      </p>
+      <p className="text-lg sm:text-xl font-semibold text-rose-700 mb-8 text-center">
+        Dept. of CSE (AIML & CS), GIET
+      </p>
+
       {!showSearch ? (
-        <>
-          <div className="max-w-2xl text-center space-y-6">
-            <h2 className="text-2xl font-semibold text-rose-600">
-              Steps to use this application
-            </h2>
-            <ol className="list-decimal list-inside space-y-2 text-lg leading-relaxed max-w-md mx-auto">
-              <li>Enter your PIN number in the search box and click Search</li>
-              <li>
-                Generate and download your hallticket if fee dues are cleared
-              </li>
-              <li>
-                If fee dues are not cleared, upload your payment receipt to
-                update the status
-              </li>
-              <li>Contact the admin if you face any issues</li>
-            </ol>
-            <p className="text-red-600 italic max-w-md mx-auto mt-4">
-              Note: After downloading the hallticket, take a printout and get it
-              signed in the department before 18/08/2025
-            </p>
-            <button
-              onClick={() => setShowSearch(true)}
-              className="mt-8 bg-rose-600 hover:bg-rose-700 text-white font-semibold px-6 py-3 rounded shadow transition"
-            >
-              Download Hallticket
-            </button>
+        <div className="w-full max-w-md space-y-4 text-rose-700">
+          <div className="flex items-center space-x-2 text-base sm:text-lg">
+            <FiFileText className="text-rose-600 w-5 h-5" />
+            <span>Enter your PIN number and search</span>
           </div>
-        </>
+          <div className="flex items-center space-x-2 text-base sm:text-lg">
+            <FiCheckCircle className="text-rose-600 w-5 h-5" />
+            <span>Generate hallticket if you've cleared dues</span>
+          </div>
+          <div className="flex items-center space-x-2 text-base sm:text-lg">
+            <FiUpload className="text-rose-600 w-5 h-5" />
+            <span>
+              If you have dues, upload payment receipt to update status
+            </span>
+          </div>
+          <div className="flex items-center space-x-2 text-base sm:text-lg">
+            <FiAlertCircle className="text-rose-600 w-5 h-5" />
+            <span>Contact Admin if you have any issues</span>
+          </div>
+
+          <p className="text-red-400 italic text-center mt-2 text-sm sm:text-base">
+            Note: You should get the hallticket signed by the department before
+            18th Aug 2025
+          </p>
+
+          <button
+            className="bg-rose-600 text-white font-semibold px-6 py-3 rounded w-full mt-4"
+            onClick={() => setShowSearch(true)}
+          >
+            Download Hallticket
+          </button>
+        </div>
       ) : (
-        <StudentSearch onBack={() => setShowSearch(false)} />
+        <StudentSearch />
       )}
     </div>
   );
