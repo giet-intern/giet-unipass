@@ -9,7 +9,7 @@ export default function AdminLogin({ setAdminLoggedIn }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === "admin" && password === "admin123") {
+    if (username === "hodaiml" && password === "Hod@aiml&cs1998") {
       toast.success("Login successful");
       setAdminLoggedIn(true);
       navigate("/dashboard");
