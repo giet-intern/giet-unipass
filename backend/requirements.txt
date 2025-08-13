@@ -6,3 +6,4 @@ docx
 reportlab
 PyMuPDF
 gunicorn
+exceptions
