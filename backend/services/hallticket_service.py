@@ -133,7 +133,7 @@ def generate_hallticket_pdf(pin: str):
     c.drawCentredString(width / 2, y, exam_title)
     y -= 20
 
-    # Student Info Table
+    # Student Info 
     student_info = [
         ["Hall Ticket No:", student["pin"], "ID:", hallticket_id],
         ["Name:", student["name"], "", ""],
