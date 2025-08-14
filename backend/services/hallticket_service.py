@@ -125,8 +125,10 @@ def generate_hallticket_pdf(pin: str):
     # Exam title by year
     if year == 3:
         exam_title = "Hall Ticket: Mid-1 Examinations, III B.Tech I Sem (A.Y: 2025-26)"
+        exam_time = "Time: Objective Exam – 10:50 am – 11:00 am, Descriptive Exam: 11:00 am – 12:30 pm"
     else:
         exam_title = "Hall Ticket: Mid-1 Examinations, IV B.Tech I Sem (A.Y: 2025-26)"
+        exam_time = "Time: Objective Exam – 2:30 pm – 2:40 pm, Descriptive Exam: 2:40 pm – 4:10 pm"
     c.setFont("Times-Bold", 12)
     c.drawCentredString(width / 2, y, exam_title)
     y -= 20
@@ -162,7 +164,7 @@ def generate_hallticket_pdf(pin: str):
 
     # Time line
     c.setFont("Times-Roman", 11)
-    c.drawString(40, y, "Time: Objective Exam – 2.30 pm – 2.40 pm, Descriptive Exam: 2.40 pm – 4.10 pm")
+    c.drawString(40, y, exam_time)
     y -= 18
 
     # Exam Schedule heading
