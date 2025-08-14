@@ -3,7 +3,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        fancy: ["Pacifico", "cursive"],
+        fancy: ["Pacifico", "cursive", "flower"],
       },
       colors: {
         rose: {

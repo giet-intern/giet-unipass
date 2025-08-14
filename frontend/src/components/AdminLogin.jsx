@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAdmin } from "../context/AdminContext";
 import toast, { Toaster } from "react-hot-toast";
 
-export default function AdminLogin({ setAdminLoggedIn }) {
+export default function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAdmin();
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === "hodaiml" && password === "Hod@aiml&cs1998") {
+      login();
       toast.success("Login successful");
-      setAdminLoggedIn(true);
       navigate("/dashboard");
-    } else toast.error("Invalid credentials");
+    } else {
+      toast.error("Invalid credentials");
+    }
   };
 
   return (
@@ -21,9 +25,9 @@ export default function AdminLogin({ setAdminLoggedIn }) {
       <Toaster position="top-center" />
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-sm p-6 rounded shadow-md bg-rose-50 flex flex-col space-y-4"
+        className="w-full max-w-sm bg-rose-50 p-6 rounded shadow-md"
       >
-        <h2 className="text-center font-flower text-2xl text-rose-600">
+        <h2 className="text-2xl font-semibold text-rose-600 mb-4 text-center">
           Admin Sign In
         </h2>
         <input
@@ -31,18 +35,18 @@ export default function AdminLogin({ setAdminLoggedIn }) {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-4 py-2 rounded border border-rose-300 focus:outline-none"
+          className="w-full mb-4 px-3 py-2 border rounded focus:outline-none"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 rounded border border-rose-300 focus:outline-none"
+          className="w-full mb-4 px-3 py-2 border rounded focus:outline-none"
         />
         <button
           type="submit"
-          className="bg-rose-600 text-white font-semibold px-4 py-2 rounded w-full"
+          className="w-full bg-rose-600 text-white py-2 rounded font-semibold hover:bg-rose-700"
         >
           Sign In
         </button>
