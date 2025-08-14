@@ -41,7 +41,16 @@ export default function LandingPage() {
               <FiAlertCircle className="text-rose-600 w-5 h-5" />
               <span>Contact Admin if you have any issues</span>
             </div>
-
+            <p>
+              Download receipt as PDF from campx website{" "}
+              <a
+                href="https://giet.campx.in/gier-2/payments/public/login"
+                className="text-rose-600 underline"
+              >
+                here
+              </a>
+              .
+            </p>
             <p className="text-red-400 italic text-center mt-2 text-sm sm:text-base">
               Note: You should get the hallticket signed by the department
               before 18th Aug 2025
