@@ -51,6 +51,10 @@ export default function StudentSearch() {
         a.remove();
         window.URL.revokeObjectURL(url);
         toast.success("Hallticket downloaded");
+        setPin("");
+        setStudent(null);
+        setReceiptFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = null;
       }
     } catch {
       toast.error("Error generating hallticket.");
