@@ -95,7 +95,12 @@ def process_receipt_pdf(file_storage, user_pin):
             "success": False,
             "message": "Amount paid is less than due"
         }
-
+    if due < 7500 and amount_paid != due:
+        return {
+            "success": False,
+            "message": "Amount paid is less than due"
+        }
+        
     # Check PIN match
     if roll_no.strip().lower() != user_pin.strip().lower():
         return {
