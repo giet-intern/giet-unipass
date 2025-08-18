@@ -39,22 +39,26 @@ export default function StudentSearch() {
 
   const handleGenerate = async () => {
     try {
-      if (pin == student.pin) {
-        const response = await generateHallticket(pin.trim());
+      if (student && student.due === 0) {
+        const response = await generateHallticket(student.pin); // ✅ always use student.pin
         const blob = new Blob([response.data], { type: "application/pdf" });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `hallticket_${pin.trim()}.pdf`;
+        a.download = `hallticket_${student.pin}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
         toast.success("Hallticket downloaded");
+
+        // reset form
         setPin("");
         setStudent(null);
         setReceiptFile(null);
         if (fileInputRef.current) fileInputRef.current.value = null;
+      } else {
+        toast.error("Hallticket can only be generated when dues are cleared");
       }
     } catch {
       toast.error("Error generating hallticket.");
