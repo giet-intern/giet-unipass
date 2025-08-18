@@ -191,7 +191,7 @@ def generate_hallticket_pdf(pin: str):
     # Signatures
     c.setFont("Times-Roman", 11)
     c.drawString(60, y, "Signature of Student")
-    c.drawRightString(width - 60, y, "Signature of HOD")
+    c.drawRightString(width - 60, y, "Signature of HOD/Class Teacher")
 
     c.showPage()
     c.save()
