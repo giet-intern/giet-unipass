@@ -39,17 +39,19 @@ export default function StudentSearch() {
 
   const handleGenerate = async () => {
     try {
-      const response = await generateHallticket(pin.trim());
-      const blob = new Blob([response.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `hallticket_${pin.trim()}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-      toast.success("Hallticket downloaded");
+      if (pin == student.pin) {
+        const response = await generateHallticket(pin.trim());
+        const blob = new Blob([response.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `hallticket_${pin.trim()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        toast.success("Hallticket downloaded");
+      }
     } catch {
       toast.error("Error generating hallticket.");
     }
