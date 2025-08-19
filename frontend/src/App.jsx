@@ -12,27 +12,43 @@ import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 function AppRoutes() {
-  const { isAdmin } = useAdmin();
+  const { isAdmin, username } = useAdmin();
 
   return (
     <Routes>
       {/* Home redirects to dashboard if logged in */}
       <Route
         path="/"
-        element={isAdmin ? <Navigate to="/admin" replace /> : <LandingPage />}
+        element={
+          isAdmin && username == "hodaiml" ? (
+            <Navigate to="/admin" replace />
+          ) : (
+            <LandingPage />
+          )
+        }
       />
 
       {/* Admin login only if not logged in */}
       <Route
         path="/login"
-        element={isAdmin ? <Navigate to="/admin" replace /> : <AdminLogin />}
+        element={
+          isAdmin && username == "hodaiml" ? (
+            <Navigate to="/admin" replace />
+          ) : (
+            <AdminLogin />
+          )
+        }
       />
 
       {/* Admin dashboard protected */}
       <Route
         path="/admin"
         element={
-          isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />
+          isAdmin && username == "hodaiml" ? (
+            <AdminDashboard />
+          ) : (
+            <Navigate to="/login" replace />
+          )
         }
       />
 
