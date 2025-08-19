@@ -3,7 +3,7 @@ import collegeLogo from "../assets/logo.png";
 import { useAdmin } from "../context/AdminContext";
 
 export default function Navbar() {
-  const { isAdmin, logout } = useAdmin();
+  const { isAdmin, username, logout } = useAdmin();
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-rose-600 px-4 py-3 flex items-center justify-between shadow-md z-50">
@@ -17,7 +17,7 @@ export default function Navbar() {
 
       <div className="flex space-x-4 text-white font-medium">
         <Link to="/">Home</Link>
-        {!isAdmin ? (
+        {!isAdmin && username == "hodaiml" ? (
           <Link to="/login">Admin</Link>
         ) : (
           <button
