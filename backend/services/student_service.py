@@ -94,13 +94,13 @@ def process_receipt_pdf(file_storage, user_pin):
         update_student_due(user_pin, due - amount_paid)
         return {
             "success": False,
-            "message": "Amount paid is less than due"
+            "message": "Due updated, search again for updated due"
         }
     if due < 7500 and amount_paid < due:
         update_student_due(user_pin, due - amount_paid)
         return {
             "success": False,
-            "message": "Amount paid is less than due"
+            "message": "Due updated, search again for updated due"
         }
         
     # Check PIN match
