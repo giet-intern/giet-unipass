@@ -19,6 +19,8 @@ export default function Navbar() {
         <Link to="/">Home</Link>
         {!isAdmin ? (
           <Link to="/login">Admin</Link>
+        ) : username != "hodaiml" ? (
+          <span>Admin</span>
         ) : (
           <button
             onClick={logout}

@@ -6,6 +6,7 @@ from utils.mongo_utils import (
     update_student_due,
     update_student_receipt,
     update_student_fee,
+    update_student_receipts
 )
 
 DATE_FORMAT = "%d-%b-%Y"
@@ -40,9 +41,16 @@ def process_receipt_pdf(file_storage, user_pin):
     roll_no = None
     amount_paid = None
     payment_date = None
+    receipt_no = None
 
     for i, line in enumerate(lines):
         line_lower = line.lower()
+
+        # Extract Receipt Number
+        if "receipt number" in line_lower:
+            parts = line.split(":", 1)
+            if len(parts) > 1 and parts[1].strip():
+                receipt_no = parts[1].strip()
 
         # Extract Roll No
         if "roll no" in line_lower:
@@ -70,15 +78,16 @@ def process_receipt_pdf(file_storage, user_pin):
                 except Exception as e:
                     print(f"Date parsing error: {e}")
 
+    print(f"Parsed receipt_no: '{receipt_no}'")
     print(f"Parsed roll_no: '{roll_no}'")
     print(f"Parsed amount_paid: {amount_paid}")
     print(f"Parsed payment_date: {payment_date}")
 
     # Validate extracted data
-    if not roll_no or amount_paid is None or payment_date is None:
+    if not receipt_no or not roll_no or amount_paid is None or payment_date is None:
         return {
             "success": False,
-            "message": "Could not read Roll No, Amount Paid or Date from receipt"
+            "message": "Could not read Receipt No, Roll No, Amount Paid or Date from receipt"
         }
 
     # Check date condition
@@ -89,15 +98,31 @@ def process_receipt_pdf(file_storage, user_pin):
         }
 
     student = find_student_by_pin(user_pin)
+    if not student:
+        return {
+            "success": False,
+            "message": "Student not found"
+        }
+
+    # Check for duplicate receipt number
+    receipts = student.get("receipts", [])
+    if receipt_no in receipts:
+        return {
+            "success": False,
+            "message": f"Receipt {receipt_no} already processed"
+        }
+
     due = student.get("due", 0)
     if amount_paid < 7500 and due >= 7500:
         update_student_due(user_pin, due - amount_paid)
+        update_student_receipts(user_pin, receipt_no)  # add receipt to list
         return {
             "success": False,
             "message": "Due updated, search again for updated due"
         }
     if due < 7500 and amount_paid < due:
         update_student_due(user_pin, due - amount_paid)
+        update_student_receipts(user_pin, receipt_no)  # add receipt to list
         return {
             "success": False,
             "message": "Due updated, search again for updated due"
@@ -110,19 +135,11 @@ def process_receipt_pdf(file_storage, user_pin):
             "message": "PIN in receipt does not match your PIN"
         }
 
-    if not student:
-        return {
-            "success": False,
-            "message": "Student not found"
-        }
-
-    due = student.get("due", 0)
+    # Clear dues and add receipt number
     update_student_due(user_pin, 0)
-    
-    # Since no file saved, optionally store text or metadata as receipt info
-    update_student_receipt(user_pin, "Receipt processed (no file stored)")
+    update_student_receipts(user_pin, receipt_no)
 
     return {
         "success": True,
-        "message": "Fee verified and due cleared"
+        "message": f"Fee verified and due cleared with receipt {receipt_no}"
     }

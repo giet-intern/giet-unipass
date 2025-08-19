@@ -21,3 +21,10 @@ def update_student_hallticket(pin, pdf_path=None, hallticket_id=None):
 def update_student_due(pin, due):
     result = students_collection.update_one({"pin": pin}, {"$set": {"due": due}})
     return result.modified_count
+
+def update_student_receipts(user_pin, receipt_no):
+    # Append receipt_no to student's "receipts" list
+    students_collection.update_one(
+        {"pin": user_pin},
+        {"$push": {"receipts": receipt_no}}
+    )
