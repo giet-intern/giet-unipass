@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateHallticket } from "../services/api";
+import { generateHallticketFaculty } from "../services/api";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function AdminDashboard() {
@@ -10,7 +10,7 @@ export default function AdminDashboard() {
     if (!pin.trim()) return toast.error("Enter PIN first");
     setLoading(true);
     try {
-      const response = await generateHallticket(pin.trim());
+      const response = await generateHallticketFaculty(pin.trim());
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");

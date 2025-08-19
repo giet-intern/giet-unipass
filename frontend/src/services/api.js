@@ -27,6 +27,12 @@ export const generateHallticket = (pin) => {
   });
 };
 
+export const generateHallticketFaculty = (pin) => {
+  return axios.get(`${API_BASE_URL}/faculty/generateHallticket/${pin}`, {
+    responseType: "blob",
+  });
+};
+
 export const uploadReceipt = (pin, formData) => {
   return axios
     .post(`${API_BASE_URL}/student/uploadReceipt/${pin}`, formData, {

@@ -18,10 +18,11 @@ def search_student(pin):
 
 @student_bp.route("/generateHallticket/<pin>", methods=["GET"])
 def generate_hallticket(pin):
-    pdf_buffer = generate_hallticket_pdf(pin)
-    if not pdf_buffer:
+    student = get_student(pin)
+    if student["due"] == 0:
+        pdf_buffer = generate_hallticket_pdf(pin)
+    else:
         return jsonify({"error": "Fee due or student not found"}), 400
-
     return send_file(
         pdf_buffer,
         as_attachment=True,
