@@ -11,7 +11,6 @@ from io import BytesIO
 from utils.mongo_utils import find_student_by_pin, update_student_hallticket
 import os
 
-
 def _replace_placeholders_in_doc(doc: Document, replacements: dict):
     for para in doc.paragraphs:
         for key, val in replacements.items():
@@ -92,37 +91,34 @@ def generate_hallticket_pdf(pin: str):
 
     y = height - 35 * mm
 
-    # Main Title
     para = Paragraph("GODAVARI INSTITUTE OF ENGINEERING & TECHNOLOGY", title_style)
     w, h = para.wrap(width - 80, 100)
     para.drawOn(c, 40, y)
-    y -= h + 4  # Small gap
+    y -= h + 4
 
-    # Affiliation line
     para = Paragraph("Approved By AICTE | NAAC ‘A++’ | Recognized by UGC,", subtitle_style)
     w, h = para.wrap(width - 80, 100)
     para.drawOn(c, 40, y)
     y -= h + 2
 
-    # Extra affiliation line
     para = Paragraph("U/Sec. 2(f) & 12(B) | Permanently Affiliated to JNTUK, Kakinada", subtitle_style)
     w, h = para.wrap(width - 80, 100)
     para.drawOn(c, 40, y)
     y -= h
 
-    # Horizontal line
     c.setStrokeColor(colors.black)
     c.setLineWidth(0.8)
     c.line(40, y, width - 40, y)
     y -= 12
 
-    # Department line
-    dept_line = f"Computer Science & Engineering({student['department']})"
+    if dept == "ECE":
+        dept_line = "Electronics & Communication Engineering"
+    else:
+        dept_line = f"Computer Science & Engineering({student['department']})"
     c.setFont("Times-Bold", 12)
     c.drawCentredString(width / 2, y, dept_line)
     y -= 16
 
-    # Exam title by year
     if year == 3:
         exam_title = "Hall Ticket: Mid-1 Examinations, III B.Tech I Sem (A.Y: 2025-26)"
         exam_time = "Time: Objective Exam – 10:50 am – 11:00 am, Descriptive Exam: 11:00 am – 12:30 pm"
@@ -133,7 +129,6 @@ def generate_hallticket_pdf(pin: str):
     c.drawCentredString(width / 2, y, exam_title)
     y -= 20
 
-    # Student Info 
     student_info = [
         ["Hall Ticket No:", student["pin"], "ID:", hallticket_id],
         ["Name:", student["name"], "", ""],
@@ -162,17 +157,14 @@ def generate_hallticket_pdf(pin: str):
     table.drawOn(c, 40, y - th)
     y -= th + 18
 
-    # Time line
     c.setFont("Times-Roman", 11)
     c.drawString(40, y, exam_time)
     y -= 18
 
-    # Exam Schedule heading
     c.setFont("Times-Bold", 12)
     c.drawString(40, y, "Exam Schedule:")
     y -= 16
 
-    # Subjects Table
     table_data = [["Date", "Subject Name", "Signature of Invigilator"]] + subjects
     col_widths = [40*mm, width - 40*2 - 90*mm, 50*mm]
     subj_table = Table(table_data, colWidths=col_widths, repeatRows=1)
@@ -188,16 +180,13 @@ def generate_hallticket_pdf(pin: str):
     subj_table.drawOn(c, 40, y - th)
     y -= th + 65
 
-    # Signatures
     c.setFont("Times-Roman", 11)
     c.drawString(60, y, "Signature of Student")
     c.drawRightString(width - 60, y, "Signature of HOD/Class Teacher")
-
     c.showPage()
     c.save()
 
     buffer.seek(0)
-
     update_student_hallticket(pin, None, hallticket_id=hallticket_id)
 
-    return buffer  # Return in-memory PDF bytes
+    return buffer
