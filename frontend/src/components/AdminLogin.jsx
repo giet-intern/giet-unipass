@@ -14,7 +14,7 @@ export default function AdminLogin() {
     if (username === "hodaiml" && password === "Hod@aiml&cs1998") {
       login();
       toast.success("Login successful");
-      navigate("/dashboard");
+      navigate("/admin");
     } else {
       toast.error("Invalid credentials");
     }

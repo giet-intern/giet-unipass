@@ -22,10 +22,10 @@ faculty_bp = Blueprint("faculty", __name__)
 @faculty_bp.route("/generateHallticket/<pin>", methods=["GET"])
 def generate_hallticket(pin):
     student = find_student_by_pin(pin)
-    if student["due"] == 0:
+    if student:
         pdf_buffer = generate_hallticket_pdf(pin)
     else:
-        return jsonify({"error": "Fee due or student not found"}), 400
+        return jsonify({"error": "Student not found"}), 400
     return send_file(
         pdf_buffer,
         as_attachment=True,
