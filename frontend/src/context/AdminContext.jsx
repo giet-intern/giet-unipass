@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const AdminContext = createContext({
   isAdmin: false,
-  login: () => {},
+  username: "",
+  login: (username) => {},
   logout: () => {},
 });
 
@@ -16,14 +17,16 @@ export const AdminProvider = ({ children }) => {
     setUsername(localStorage.getItem("username") || "");
   }, []);
 
-  const login = () => {
+  const login = (username) => {
     setIsAdmin(true);
+    setUsername(username);
     localStorage.setItem("isAdmin", "true");
-    localStorage.setItem("username", "hodaiml");
+    localStorage.setItem("username", username);
   };
 
   const logout = () => {
     setIsAdmin(false);
+    setUsername("");
     localStorage.removeItem("isAdmin");
     localStorage.removeItem("username");
   };

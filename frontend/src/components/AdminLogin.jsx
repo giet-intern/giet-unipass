@@ -12,7 +12,7 @@ export default function AdminLogin() {
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === "hodaiml" && password === "Hod@aiml&cs1998") {
-      login();
+      login(username);
       toast.success("Login successful");
       navigate("/admin");
     } else {
