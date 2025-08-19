@@ -21,7 +21,7 @@ function AppRoutes() {
         path="/"
         element={
           isAdmin && username == "hodaiml" ? (
-            <Navigate to="/admin" replace />
+            <Navigate to="/admin" />
           ) : (
             <LandingPage />
           )
@@ -33,7 +33,7 @@ function AppRoutes() {
         path="/login"
         element={
           isAdmin && username == "hodaiml" ? (
-            <Navigate to="/admin" replace />
+            <Navigate to="/admin" />
           ) : (
             <AdminLogin />
           )
@@ -47,7 +47,7 @@ function AppRoutes() {
           isAdmin && username == "hodaiml" ? (
             <AdminDashboard />
           ) : (
-            <Navigate to="/login" replace />
+            <Navigate to="/login" />
           )
         }
       />
