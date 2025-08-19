@@ -17,7 +17,7 @@ export default function Navbar() {
 
       <div className="flex space-x-4 text-white font-medium">
         <Link to="/">Home</Link>
-        {!isAdmin && username == "hodaiml" ? (
+        {!isAdmin ? (
           <Link to="/login">Admin</Link>
         ) : (
           <button
