@@ -112,22 +112,6 @@ def process_receipt_pdf(file_storage, user_pin):
             "message": f"Receipt {receipt_no} already processed"
         }
 
-    due = student.get("due", 0)
-    if amount_paid < 7500 and due >= 7500:
-        update_student_due(user_pin, due - amount_paid)
-        update_student_receipts(user_pin, receipt_no)  # add receipt to list
-        return {
-            "success": False,
-            "message": "Due updated, search again for updated due"
-        }
-    if due < 7500 and amount_paid < due:
-        update_student_due(user_pin, due - amount_paid)
-        update_student_receipts(user_pin, receipt_no)  # add receipt to list
-        return {
-            "success": False,
-            "message": "Due updated, search again for updated due"
-        }
-        
     # Check PIN match
     if roll_no.strip().lower() != user_pin.strip().lower():
         return {
@@ -135,11 +119,15 @@ def process_receipt_pdf(file_storage, user_pin):
             "message": "PIN in receipt does not match your PIN"
         }
 
-    # Clear dues and add receipt number
-    update_student_due(user_pin, 0)
+    # Get current due amount and calculate new due
+    due = student.get("due", 0)
+    new_due = max(0, due - amount_paid)
+
+    # Update due amount and add receipt number
+    update_student_due(user_pin, new_due)
     update_student_receipts(user_pin, receipt_no)
 
     return {
         "success": True,
-        "message": f"Fee verified and due cleared with receipt {receipt_no}"
+        "message": f"Due amount updated successfully with receipt {receipt_no}"
     }
