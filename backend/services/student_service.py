@@ -10,7 +10,7 @@ from utils.mongo_utils import (
 )
 
 DATE_FORMAT = "%d-%b-%Y"
-MIN_DATE = datetime.strptime("10-Aug-2025", DATE_FORMAT)
+MIN_DATE = datetime.strptime("22-Aug-2025", DATE_FORMAT)
 
 
 def get_student(pin):
