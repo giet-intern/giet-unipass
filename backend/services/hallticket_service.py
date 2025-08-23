@@ -11,6 +11,7 @@ from io import BytesIO
 from utils.mongo_utils import find_student_by_pin, update_student_hallticket
 import os
 
+# The _replace_placeholders_in_doc and _extract_subject_rows functions remain the same.
 def _replace_placeholders_in_doc(doc: Document, replacements: dict):
     for para in doc.paragraphs:
         for key, val in replacements.items():
@@ -85,11 +86,38 @@ def generate_hallticket_pdf(pin: str):
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
+    # ==================== MODIFICATION START ====================
+
+    # 1. ADD IMAGE TO THE TOP OF THE PDF
+    # IMPORTANT: Replace "path/to/your/logo.png" with the actual path to your image file.
+    # Make sure the image file is accessible where you run the script.
+    try:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
+        logo_path = os.path.join(base_dir, "assets", "giet-logo.jpg")  # <-- using your assets folder
+        logo_width = 40 * mm
+        logo_height = 40 * mm
+        c.drawImage(
+            logo_path,
+            (width - logo_width) / 2,  # center horizontally
+            height - 55 * mm,          # adjust Y position a little higher
+            width=logo_width,
+            height=logo_height,
+            preserveAspectRatio=True,
+            mask="auto"
+        )
+    except Exception as e:
+        print(f"Could not draw image. Error: {e}")
+        # If the image fails to load, the PDF will be generated without it.
+
+    # 2. ADJUST STARTING Y-COORDINATE FOR THE TEXT
+    # This moves all subsequent content down to make space for the logo.
+    y = height - 60 * mm  # Original value was height - 35 * mm
+
+    # ===================== MODIFICATION END =====================
+
     # Styles
     title_style = ParagraphStyle(name="Title", fontName="Times-Bold", fontSize=16, alignment=TA_CENTER, leading=15)
     subtitle_style = ParagraphStyle(name="Sub", fontName="Times-Roman", fontSize=12, alignment=TA_CENTER, leading=13)
-
-    y = height - 35 * mm
 
     para = Paragraph("GODAVARI INSTITUTE OF ENGINEERING & TECHNOLOGY", title_style)
     w, h = para.wrap(width - 80, 100)
@@ -124,7 +152,7 @@ def generate_hallticket_pdf(pin: str):
         exam_time = "Time: Objective Exam – 10:50 am – 11:00 am, Descriptive Exam: 11:00 am – 12:30 pm"
     else:
         exam_title = "Hall Ticket: Mid-1 Examinations, IV B.Tech I Sem (A.Y: 2025-26)"
-        exam_time = "Time: Objective Exam – 10:50 am – 11:00 am, Descriptive Exam: 11:00 am – 12:30 pm"
+        exam_time = "Time: Objective Exam – 2:30 pm – 2:40 pm, Descriptive Exam: 2:40 pm – 04:10 pm"
     c.setFont("Times-Bold", 12)
     c.drawCentredString(width / 2, y, exam_title)
     y -= 20
