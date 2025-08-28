@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
 import toast, { Toaster } from "react-hot-toast";
+import { USERNAME, PASSWORD } from "../utils/config";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -11,7 +12,7 @@ export default function AdminLogin() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === "hodaiml" && password === "Hod@aiml&cs1998") {
+    if (username === USERNAME && password === PASSWORD) {
       login(username);
       toast.success("Login successful");
       navigate("/admin");
