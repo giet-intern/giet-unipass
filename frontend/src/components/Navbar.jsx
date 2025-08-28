@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import collegeLogo from "../assets/logo.png";
+import collegeLogo from "../assets/ggu-logo.png";
 import { useAdmin } from "../context/AdminContext";
 
 export default function Navbar() {

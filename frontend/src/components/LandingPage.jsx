@@ -19,7 +19,7 @@ export default function LandingPage() {
             Designed & Developed for students by
           </p>
           <p className="sm:text-xl md:text-3xl font-semibold text-rose-700 mb-8 text-center">
-            Dept. of CSE (AIML & CS), GIET(A)
+            Dept. of CSE (AIML & CS), GGU
           </p>
 
           <div className="w-full max-w-md space-y-4 text-rose-700">
@@ -44,7 +44,7 @@ export default function LandingPage() {
             <p>
               Download receipt as PDF from campx website{" "}
               <a
-                href="https://giet.campx.in/gier-2/payments/public/login"
+                href="https://giet.campx.in/ggu/payments/public/login"
                 className="text-rose-600 underline"
               >
                 here
