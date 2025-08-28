@@ -62,7 +62,11 @@ def generate_hallticket_pdf(pin: str):
         (4, "DS"): "./docs/template_4_DS.docx",
         (3, "DS"): "./docs/template_3_DS.docx",
         (3, "ECE"): "./docs/template_3_ECE.docx",
-        (4, "ECE"): "./docs/template_4_ECE.docx"
+        (4, "ECE"): "./docs/template_4_ECE.docx",
+        (2, "AIML"): "./docs/template_2_AIML.docx",
+        (2, "CS"): "./docs/template_2_CS.docx",
+        (2, "DS"): "./docs/template_2_DS.docx",
+        (2, "ECE"): "./docs/template_2_ECE.docx"
     }
     template = template_map.get((year, dept))
     if not template or not os.path.isfile(template):
@@ -86,14 +90,19 @@ def generate_hallticket_pdf(pin: str):
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
+    if year == 2:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
+        logo_path = os.path.join(base_dir, "assets", "ggu-logo.png")
+    else:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
+        logo_path = os.path.join(base_dir, "assets", "giet-logo.jpg")
     # ==================== MODIFICATION START ====================
 
     # 1. ADD IMAGE TO THE TOP OF THE PDF
     # IMPORTANT: Replace "path/to/your/logo.png" with the actual path to your image file.
     # Make sure the image file is accessible where you run the script.
     try:
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
-        logo_path = os.path.join(base_dir, "assets", "giet-logo.jpg")  # <-- using your assets folder
+          # <-- using your assets folder
         logo_width = 40 * mm
         logo_height = 40 * mm
         c.drawImage(
@@ -119,20 +128,27 @@ def generate_hallticket_pdf(pin: str):
     title_style = ParagraphStyle(name="Title", fontName="Times-Bold", fontSize=16, alignment=TA_CENTER, leading=15)
     subtitle_style = ParagraphStyle(name="Sub", fontName="Times-Roman", fontSize=12, alignment=TA_CENTER, leading=13)
 
-    para = Paragraph("GODAVARI INSTITUTE OF ENGINEERING & TECHNOLOGY", title_style)
-    w, h = para.wrap(width - 80, 100)
-    para.drawOn(c, 40, y)
-    y -= h + 4
+    if year == 2:
+        para = Paragraph("GODAVARI GLOBAL UNIVERSITY", title_style)
+        w, h = para.wrap(width - 80, 100)
+        para.drawOn(c, 40, y)
+        y -= h + 4
 
-    para = Paragraph("Approved By AICTE | NAAC ‘A++’ | Recognized by UGC,", subtitle_style)
-    w, h = para.wrap(width - 80, 100)
-    para.drawOn(c, 40, y)
-    y -= h + 2
+    else:
+        para = Paragraph("GODAVARI INSTITUTE OF ENGINEERING & TECHNOLOGY", title_style)
+        w, h = para.wrap(width - 80, 100)
+        para.drawOn(c, 40, y)
+        y -= h + 4
 
-    para = Paragraph("U/Sec. 2(f) & 12(B) | Permanently Affiliated to JNTUK, Kakinada", subtitle_style)
-    w, h = para.wrap(width - 80, 100)
-    para.drawOn(c, 40, y)
-    y -= h
+        para = Paragraph("Approved By AICTE | NAAC ‘A++’ | Recognized by UGC,", subtitle_style)
+        w, h = para.wrap(width - 80, 100)
+        para.drawOn(c, 40, y)
+        y -= h + 2
+
+        para = Paragraph("U/Sec. 2(f) & 12(B) | Permanently Affiliated to JNTUK, Kakinada", subtitle_style)
+        w, h = para.wrap(width - 80, 100)
+        para.drawOn(c, 40, y)
+        y -= h
 
     c.setStrokeColor(colors.black)
     c.setLineWidth(0.8)
@@ -147,7 +163,10 @@ def generate_hallticket_pdf(pin: str):
     c.drawCentredString(width / 2, y, dept_line)
     y -= 16
 
-    if year == 3:
+    if year == 2:
+        exam_title = "Hall Ticket: Mid-1 Examinations, II B.Tech I Sem (A.Y: 2025-26)"
+        exam_time = "Time: 2:45 pm - 4:15pm"
+    elif year == 3:
         exam_title = "Hall Ticket: Mid-1 Examinations, III B.Tech I Sem (A.Y: 2025-26)"
         exam_time = "Time: Objective Exam – 10:50 am – 11:00 am, Descriptive Exam: 11:00 am – 12:30 pm"
     else:
