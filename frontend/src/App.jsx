@@ -10,6 +10,7 @@ import LandingPage from "./components/LandingPage";
 import AdminLogin from "./components/AdminLogin";
 import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import { USERNAME } from "./utils/config";
 
 function AppRoutes() {
   const { isAdmin, username } = useAdmin();
@@ -32,7 +33,7 @@ function AppRoutes() {
       <Route
         path="/login"
         element={
-          isAdmin && username == "hodaiml" ? (
+          isAdmin && username == USERNAME ? (
             <Navigate to="/admin" />
           ) : (
             <AdminLogin />
